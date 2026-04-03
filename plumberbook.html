@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Emergency Plumber — Book Now</title>
+<style>
+  :root {
+    --font-head: 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: 'SF Pro Text', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --blue: #0EA5FF;
+    --blue-dark: #0080CC;
+    --blue-dim: rgba(14,165,255,0.10);
+    --blue-glow: rgba(14,165,255,0.35);
+    --red: #FF2D55;
+    --red-dim: rgba(255,45,85,0.12);
+    --red-glow: rgba(255,45,85,0.35);
+    --bg: #060A10;
+    --panel: #0F1822;
+    --panel2: #131F2B;
+    --border-solid: #182336;
+    --text: #E8F4FF;
+    --muted: #4A6680;
+    --success: #00E676;
+    --grid-color: rgba(14,165,255,0.035);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed; top: -250px; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, rgba(14,165,255,0.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* HEADER */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(6,10,16,0.92);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border-solid);
+  }
+  .header::before {
+    content: ''; display: block; height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--blue) 40%, rgba(14,165,255,0.2) 100%);
+  }
+  .header-inner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 18px; position: relative; z-index: 1;
+  }
+  .header-logo {
+    width: 36px; height: 36px;
+    background: var(--blue-dim);
+    border: 1px solid rgba(14,165,255,0.25);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .header-text h1 {
+    font-family: var(--font-head);
+    font-weight: 700; font-size: 16px; letter-spacing: -0.4px;
+    color: var(--text); line-height: 1.2;
+  }
+  .header-text p { font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 1px; }
+  .availability-badge {
+    margin-left: auto;
+    background: rgba(0,230,118,0.08); color: var(--success);
+    border: 1px solid rgba(0,230,118,0.18);
+    font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    padding: 5px 10px; border-radius: 20px;
+    display: flex; align-items: center; gap: 5px; white-space: nowrap;
+  }
+  .pulse-dot {
+    width: 6px; height: 6px; background: var(--success); border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  .page { display: none; position: relative; z-index: 1; }
+  .page.active { display: block; }
+
+  .form-wrap { padding: 22px 16px 48px; max-width: 520px; margin: 0 auto; }
+
+  .form-hero {
+    background: linear-gradient(135deg, var(--panel) 0%, var(--panel2) 100%);
+    border: 1px solid var(--border-solid); border-radius: 18px;
+    padding: 22px 20px; margin-bottom: 24px; position: relative; overflow: hidden;
+  }
+  .form-hero::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--blue), rgba(14,165,255,0.15));
+  }
+  .form-hero h2 {
+    font-family: var(--font-head); font-weight: 700; font-size: 22px;
+    letter-spacing: -0.5px; line-height: 1.25; color: var(--text); margin-bottom: 7px;
+  }
+  .form-hero h2 span { color: var(--blue); }
+  .form-hero p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .form-hero-icon {
+    position: absolute; right: 18px; top: 50%;
+    transform: translateY(-50%); font-size: 42px; opacity: 0.12;
+  }
+
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border-solid), transparent);
+  }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 7px;
+  }
+  .field label span.req { color: var(--blue); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="tel"],
+  input[type="email"],
+  textarea, select {
+    width: 100%;
+    background: var(--panel); border: 1px solid var(--border-solid);
+    color: var(--text); font-family: var(--font-body);
+    font-size: 16px; font-weight: 400; padding: 14px 16px;
+    border-radius: 12px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    -webkit-appearance: none; appearance: none; line-height: 1.4;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--blue); background: var(--panel2);
+    box-shadow: 0 0 0 3px var(--blue-dim), 0 0 24px rgba(14,165,255,0.07);
+  }
+  input::placeholder, textarea::placeholder { color: #1E3045; }
+  textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▾'; position: absolute; right: 16px; top: 50%;
+    transform: translateY(-50%); color: var(--blue); font-size: 16px; pointer-events: none;
+  }
+  select option { background: #0C1117; }
+
+  /* URGENCY */
+  .urgency-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .urgency-opt { position: relative; cursor: pointer; }
+  .urgency-opt input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .urgency-card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; padding: 20px 12px; border-radius: 14px;
+    border: 1px solid var(--border-solid); background: var(--panel);
+    transition: all 0.22s; text-align: center; user-select: none; cursor: pointer;
+  }
+  .urgency-card .urg-icon { font-size: 26px; line-height: 1; }
+  .urgency-card .urg-title {
+    font-family: var(--font-head); font-weight: 700; font-size: 15px;
+    letter-spacing: -0.2px; color: var(--text); line-height: 1;
+  }
+  .urgency-card .urg-sub { font-size: 11px; color: var(--muted); font-weight: 400; }
+
+  .urgency-opt.emergency .urgency-card:hover { border-color: var(--red); background: var(--red-dim); }
+  .urgency-opt.normal .urgency-card:hover { border-color: var(--blue); background: var(--blue-dim); }
+
+  .urgency-opt.emergency input:checked ~ .urgency-card {
+    border-color: var(--red); background: var(--red-dim);
+    box-shadow: 0 0 30px rgba(255,45,85,0.18), 0 0 0 1px var(--red);
+    animation: emergencyPulse 2.5s ease-in-out infinite;
+  }
+  .urgency-opt.emergency input:checked ~ .urgency-card .urg-title { color: var(--red); }
+  .urgency-opt.emergency input:checked ~ .urgency-card .urg-sub { color: rgba(255,45,85,0.5); }
+  .urgency-opt.normal input:checked ~ .urgency-card {
+    border-color: var(--blue); background: var(--blue-dim);
+    box-shadow: 0 0 24px rgba(14,165,255,0.15), 0 0 0 1px var(--blue);
+  }
+  .urgency-opt.normal input:checked ~ .urgency-card .urg-title { color: var(--blue); }
+  .urgency-opt.normal input:checked ~ .urgency-card .urg-sub { color: rgba(14,165,255,0.5); }
+
+  @keyframes emergencyPulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(255,45,85,0.18), 0 0 0 1px var(--red); }
+    50% { box-shadow: 0 0 50px rgba(255,45,85,0.38), 0 0 0 1px var(--red); }
+  }
+
+  /* PHOTOS */
+  .photo-upload-area {
+    border: 1px dashed var(--border-solid); border-radius: 14px;
+    padding: 28px 16px; text-align: center; cursor: pointer;
+    transition: all 0.2s; background: var(--panel); position: relative;
+  }
+  .photo-upload-area:hover, .photo-upload-area.drag-over { border-color: var(--blue); background: var(--blue-dim); }
+  .photo-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.6; }
+  .upload-text { font-family: var(--font-head); font-weight: 600; font-size: 14px; color: var(--text); }
+  .upload-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .photo-previews { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 10px; }
+  .photo-preview {
+    aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+    position: relative; background: var(--panel2); border: 1px solid var(--border-solid);
+  }
+  .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-preview .remove-photo {
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(6,10,16,0.85); color: #fff; border: none;
+    border-radius: 50%; width: 22px; height: 22px; font-size: 11px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%; background: var(--blue); color: #000; border: none; border-radius: 14px;
+    font-family: var(--font-head); font-weight: 700; font-size: 17px; letter-spacing: -0.2px;
+    padding: 18px 20px; cursor: pointer; margin-top: 28px;
+    position: relative; overflow: hidden; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 32px var(--blue-glow); white-space: nowrap;
+  }
+  .submit-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .submit-btn:active { transform: scale(0.985); background: var(--blue-dark); box-shadow: none; }
+  .submit-btn.emergency-mode {
+    background: var(--red); box-shadow: 0 4px 32px var(--red-glow);
+    animation: btnPulse 2s ease-in-out infinite;
+  }
+  @keyframes btnPulse {
+    0%, 100% { box-shadow: 0 4px 32px rgba(255,45,85,0.35); }
+    50% { box-shadow: 0 4px 60px rgba(255,45,85,0.6); }
+  }
+  .submit-btn .btn-icon { font-size: 20px; flex-shrink: 0; }
+  .submit-note { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; }
+
+  /* STATUS MESSAGES */
+  .status-msg {
+    border-radius: 12px; padding: 14px 16px; margin-top: 14px;
+    font-size: 13px; font-weight: 600; display: none; text-align: center;
+  }
+  .status-msg.error {
+    background: var(--red-dim); color: var(--red);
+    border: 1px solid rgba(255,45,85,0.2);
+  }
+
+  /* ERRORS */
+  .field.error input, .field.error textarea, .field.error select {
+    border-color: var(--red); box-shadow: 0 0 0 3px rgba(255,45,85,0.08);
+  }
+  .error-msg { font-size: 11px; color: var(--red); margin-top: 5px; font-weight: 600; display: none; }
+  .field.error .error-msg { display: block; }
+
+  .divider { height: 1px; background: var(--border-solid); margin: 22px 0; }
+
+  .spinner {
+    width: 18px; height: 18px; flex-shrink: 0;
+    border: 2.5px solid rgba(0,0,0,0.25); border-top-color: #000;
+    border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* CONFIRMATION */
+  .confirm-wrap { padding: 40px 20px 60px; max-width: 480px; margin: 0 auto; text-align: center; }
+  .confirm-icon-wrap {
+    width: 90px; height: 90px;
+    background: rgba(0,230,118,0.08); border: 2px solid rgba(0,230,118,0.25);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin: 0 auto 24px;
+    box-shadow: 0 0 50px rgba(0,230,118,0.18);
+    animation: confirmIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes confirmIn { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .confirm-title {
+    font-family: var(--font-head); font-weight: 700; font-size: 28px;
+    letter-spacing: -0.5px; color: var(--text); margin-bottom: 10px;
+    animation: slideUp 0.4s 0.2s ease both;
+  }
+  .confirm-msg {
+    font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 20px;
+    animation: slideUp 0.4s 0.3s ease both;
+  }
+  @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .timestamp {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--panel); border: 1px solid var(--border-solid);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 12px; color: var(--muted); margin-bottom: 18px;
+    animation: slideUp 0.4s 0.35s ease both;
+  }
+  .confirm-card {
+    background: var(--panel); border: 1px solid var(--border-solid);
+    border-radius: 16px; padding: 20px; text-align: left;
+    margin-bottom: 14px; position: relative; overflow: hidden;
+    animation: slideUp 0.4s 0.4s ease both;
+  }
+  .confirm-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--blue), rgba(14,165,255,0.1));
+  }
+  .confirm-card-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
+  }
+  .confirm-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+  .confirm-row:last-child { margin-bottom: 0; }
+  .confirm-row-label {
+    font-size: 11px; color: var(--muted); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px; min-width: 72px; padding-top: 2px;
+  }
+  .confirm-row-val { font-size: 14px; font-weight: 400; color: var(--text); flex: 1; line-height: 1.4; }
+  .urgency-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-weight: 600; font-size: 13px; padding: 3px 10px; border-radius: 20px;
+  }
+  .urgency-tag.emergency { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,45,85,0.2); }
+  .urgency-tag.normal { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(14,165,255,0.2); }
+
+  /* WHATSAPP */
+  .whatsapp-banner {
+    background: rgba(37,211,102,0.06); border: 1px solid rgba(37,211,102,0.18);
+    border-radius: 14px; padding: 16px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 12px; text-decoration: none;
+    animation: slideUp 0.4s 0.5s ease both; transition: background 0.2s;
+  }
+  .whatsapp-banner:active { background: rgba(37,211,102,0.1); }
+  .whatsapp-banner .wa-icon { font-size: 26px; flex-shrink: 0; }
+  .whatsapp-banner .wa-text { flex: 1; text-align: left; }
+  .whatsapp-banner .wa-title { font-family: var(--font-head); font-weight: 600; font-size: 14px; color: #25D366; }
+  .whatsapp-banner .wa-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .whatsapp-banner .wa-arrow { color: #25D366; font-size: 16px; }
+
+  .new-booking-btn {
+    width: 100%; background: transparent; color: var(--blue);
+    border: 1px solid rgba(14,165,255,0.25); border-radius: 14px;
+    font-family: var(--font-head); font-weight: 700; font-size: 15px;
+    padding: 16px; cursor: pointer; transition: all 0.2s;
+    animation: slideUp 0.4s 0.55s ease both;
+  }
+  .new-booking-btn:active { background: var(--blue-dim); border-color: var(--blue); }
+
+  /* HOW IT WORKS BANNER */
+  .how-it-works {
+    background: var(--panel); border: 1px solid var(--border-solid);
+    border-radius: 14px; padding: 16px; margin-top: 20px;
+  }
+  .how-it-works h3 {
+    font-family: var(--font-head); font-weight: 700; font-size: 12px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+  }
+  .how-steps { display: flex; flex-direction: column; gap: 10px; }
+  .how-step { display: flex; align-items: flex-start; gap: 10px; }
+  .how-step-icon {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .how-step-icon.email { background: var(--blue-dim); }
+  .how-step-icon.whatsapp { background: rgba(37,211,102,0.1); }
+  .how-step-text { flex: 1; }
+  .how-step-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .how-step-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">🔧</div>
+    <div class="header-text">
+      <h1>Emergency Plumber</h1>
+      <p>Certified engineers · Fast response</p>
+    </div>
+    <div class="availability-badge">
+      <div class="pulse-dot"></div>
+      24/7
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ BOOKING PAGE ═══════════ -->
+<div id="bookingPage" class="page active">
+  <div class="form-wrap">
+
+    <div class="form-hero">
+      <h2>Book a <span>plumber</span><br>in seconds.</h2>
+      <p>Fill in your details and we'll have someone with you fast.</p>
+      <div class="form-hero-icon">🚿</div>
+    </div>
+
+    <div class="section-label">Your Details</div>
+
+    <div class="field" id="field-name">
+      <label>Full Name <span class="req">*</span></label>
+      <input type="text" id="fullName" placeholder="John Smith" autocomplete="name">
+      <div class="error-msg">Please enter your full name</div>
+    </div>
+    <div class="field" id="field-phone">
+      <label>Phone Number <span class="req">*</span></label>
+      <input type="tel" id="phone" placeholder="07700 900 123" autocomplete="tel">
+      <div class="error-msg">Please enter a valid phone number</div>
+    </div>
+    <div class="field" id="field-address">
+      <label>Address / Location <span class="req">*</span></label>
+      <input type="text" id="address" placeholder="12 Baker Street, London, NW1 6XE" autocomplete="street-address">
+      <div class="error-msg">Please enter your address</div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Job Details</div>
+
+    <div class="field">
+      <label>Type of Issue</label>
+      <div class="select-wrap">
+        <select id="issueType">
+          <option value="">Select issue type</option>
+          <option value="Leak">🚰 Leak</option>
+          <option value="Boiler Issue">🔥 Boiler Issue</option>
+          <option value="No Heating">❄️ No Heating</option>
+          <option value="Blocked Drain">🚿 Blocked Drain</option>
+          <option value="Other">🔧 Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea id="description" placeholder="Where is the problem? How long has it been happening? Any other details..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Photos</div>
+
+    <div class="field">
+      <label>Upload Photos <span style="color:var(--muted);font-weight:400;letter-spacing:0;text-transform:none">— optional</span></label>
+      <div class="photo-upload-area" id="dropzone">
+        <input type="file" id="photoInput" accept="image/*" multiple>
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Tap to add photos</div>
+        <div class="upload-sub">JPG · PNG · HEIC · Up to 6 photos</div>
+      </div>
+      <div class="photo-previews" id="photoPreviews"></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Urgency</div>
+
+    <div class="field" id="field-urgency">
+      <div class="urgency-group">
+        <label class="urgency-opt emergency">
+          <input type="radio" name="urgency" value="EMERGENCY" id="urgEmergency">
+          <div class="urgency-card">
+            <div class="urg-icon">🚨</div>
+            <div class="urg-title">Emergency</div>
+            <div class="urg-sub">Need help now</div>
+          </div>
+        </label>
+        <label class="urgency-opt normal">
+          <input type="radio" name="urgency" value="Normal" id="urgNormal" checked>
+          <div class="urgency-card">
+            <div class="urg-icon">📅</div>
+            <div class="urg-title">Normal</div>
+            <div class="urg-sub">Within 24–48hrs</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+      <span class="btn-icon">⚡</span>
+      <span id="btnText">Request a Plumber</span>
+      <div class="spinner" id="btnSpinner"></div>
+    </button>
+    <div class="status-msg error" id="errorMsg">⚠️ Failed to send. Please try again or call us directly.</div>
+    <p class="submit-note">📞 You'll be contacted — usually within 15 minutes</p>
+
+    <!-- How notifications work -->
+    <div class="how-it-works">
+      <h3>How you'll be notified</h3>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-icon email">📧</div>
+          <div class="how-step-text">
+            <div class="how-step-title">Instant email notification</div>
+            <div class="how-step-sub">Full job details sent automatically via Formspree</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-icon whatsapp">💬</div>
+          <div class="how-step-text">
+            <div class="how-step-title">WhatsApp message</div>
+            <div class="how-step-sub">Customer taps Send on the confirmation screen to message you directly</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════ CONFIRMATION PAGE ═══════════ -->
+<div id="confirmPage" class="page">
+  <div class="confirm-wrap">
+    <div class="confirm-icon-wrap">✅</div>
+    <h2 class="confirm-title">Request Sent!</h2>
+    <p class="confirm-msg">Your request has been sent.<br>A plumber will contact you shortly.</p>
+    <div class="timestamp" id="confirmTimestamp"></div>
+    <div class="confirm-card" id="confirmSummary"></div>
+    <a href="#" class="whatsapp-banner" id="whatsappLink" onclick="return false;">
+      <div class="wa-icon">💬</div>
+      <div class="wa-text">
+        <div class="wa-title">Also send via WhatsApp</div>
+        <div class="wa-sub">Tap to message the plumber directly</div>
+      </div>
+      <div class="wa-arrow">→</div>
+    </a>
+    <button class="new-booking-btn" onclick="newBooking()">+ New Booking</button>
+  </div>
+</div>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────
+  const FORMSPREE_URL = 'https://formspree.io/f/mreoadqy';
+  const WHATSAPP_NUM  = '2348108041573';
+  const IMGBB_API_KEY = 'YOUR_IMGBB_API_KEY'; // ← Replace with your free key from imgbb.com/api
+  // ────────────────────────────────────────────────────
+
+  let selectedFiles = [];
+
+  document.getElementById('photoInput').addEventListener('change', e => handleFiles(e.target.files));
+  const dropzone = document.getElementById('dropzone');
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+
+  function handleFiles(files) {
+    for (const f of files) if (f.type.startsWith('image/') && selectedFiles.length < 6) selectedFiles.push(f);
+    renderPreviews();
+  }
+  function renderPreviews() {
+    const c = document.getElementById('photoPreviews'); c.innerHTML = '';
+    selectedFiles.forEach((f, i) => {
+      const url = URL.createObjectURL(f), d = document.createElement('div');
+      d.className = 'photo-preview';
+      d.innerHTML = `<img src="${url}" alt="Photo ${i+1}"><button class="remove-photo" onclick="removePhoto(${i})">✕</button>`;
+      c.appendChild(d);
+    });
+  }
+  function removePhoto(i) { selectedFiles.splice(i,1); renderPreviews(); }
+
+  document.querySelectorAll('input[name="urgency"]').forEach(r => {
+    r.addEventListener('change', function() {
+      const btn = document.getElementById('submitBtn'), icon = btn.querySelector('.btn-icon');
+      if (this.value === 'EMERGENCY') { btn.classList.add('emergency-mode'); icon.textContent = '🚨'; }
+      else { btn.classList.remove('emergency-mode'); icon.textContent = '⚡'; }
+    });
+  });
+
+  function validate() {
+    let ok = true;
+    [['fullName','field-name'],['phone','field-phone'],['address','field-address']].forEach(([id,fid]) => {
+      const el = document.getElementById(id), fe = document.getElementById(fid);
+      if (!el.value.trim()) { fe.classList.add('error'); ok = false; } else fe.classList.remove('error');
+    });
+    return ok;
+  }
+
+  // Upload a single image file to ImgBB and return its public URL
+  async function uploadToImgBB(file) {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    const body = new FormData();
+    body.append('key', IMGBB_API_KEY);
+    body.append('image', base64);
+    body.append('name', file.name);
+    const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body });
+    if (!res.ok) throw new Error('ImgBB upload failed');
+    const json = await res.json();
+    return json.data.url;
+  }
+
+  async function submitForm() {
+    if (!validate()) return;
+
+    const btn      = document.getElementById('submitBtn');
+    const t        = document.getElementById('btnText');
+    const sp       = document.getElementById('btnSpinner');
+    const errMsg   = document.getElementById('errorMsg');
+
+    btn.disabled = true;
+    sp.style.display = 'block';
+    errMsg.style.display = 'none';
+
+    const urgency   = document.querySelector('input[name="urgency"]:checked')?.value || 'Normal';
+    const isEmerg   = urgency === 'EMERGENCY';
+    const timestamp = new Date();
+
+    const data = {
+      name:        document.getElementById('fullName').value.trim(),
+      phone:       document.getElementById('phone').value.trim(),
+      address:     document.getElementById('address').value.trim(),
+      issue:       document.getElementById('issueType').value || 'Not specified',
+      description: document.getElementById('description').value.trim() || 'No description provided',
+      urgency,
+      photoCount:  selectedFiles.length,
+      timestamp
+    };
+
+    try {
+      // ── Step 1: Upload photos to ImgBB and collect URLs ──
+      let photoUrls = [];
+      if (selectedFiles.length > 0) {
+        t.textContent = `Uploading ${selectedFiles.length} photo(s)…`;
+        photoUrls = await Promise.all(selectedFiles.map(f => uploadToImgBB(f)));
+      }
+
+      // ── Step 2: Build Formspree payload with photo URLs ──
+      t.textContent = 'Sending…';
+      const formData = new FormData();
+      formData.append('_subject',     `${isEmerg ? '🚨 EMERGENCY JOB' : 'New Job Request'} — ${data.issue} — ${data.name}`);
+      formData.append('Full Name',    data.name);
+      formData.append('Phone Number', data.phone);
+      formData.append('Address',      data.address);
+      formData.append('Issue Type',   data.issue);
+      formData.append('Description',  data.description);
+      formData.append('Urgency',      isEmerg ? '🚨 EMERGENCY — RESPOND IMMEDIATELY' : '📅 Normal');
+      formData.append('Submitted At', timestamp.toLocaleString('en-GB'));
+
+      if (photoUrls.length > 0) {
+        // Send each URL as a clickable link in its own field
+        photoUrls.forEach((url, i) => formData.append(`Photo ${i + 1}`, url));
+      } else {
+        formData.append('Photos', 'No photos uploaded');
+      }
+
+      // ── Step 3: Submit to Formspree ──
+      const res = await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.ok) {
+        showConfirmation(data);
+      } else {
+        throw new Error('Formspree error');
+      }
+    } catch (err) {
+      errMsg.style.display = 'block';
+      btn.disabled = false;
+      t.textContent = isEmerg ? '🚨 Request Emergency Plumber' : 'Request a Plumber';
+    } finally {
+      sp.style.display = 'none';
+    }
+  }
+
+  function showConfirmation(data) {
+    const em = data.urgency === 'EMERGENCY';
+    const urgTag = em
+      ? '<span class="urgency-tag emergency">🚨 Emergency</span>'
+      : '<span class="urgency-tag normal">📅 Normal</span>';
+
+    document.getElementById('confirmTimestamp').innerHTML =
+      `⏱ ${data.timestamp.toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+
+    document.getElementById('confirmSummary').innerHTML = `
+      <div class="confirm-card-title">Job Summary</div>
+      <div class="confirm-row"><span class="confirm-row-label">Name</span><span class="confirm-row-val">${esc(data.name)}</span></div>
+      <div class="confirm-row"><span class="confirm-row-label">Phone</span><span class="confirm-row-val">${esc(data.phone)}</span></div>
+      <div class="confirm-row"><span class="confirm-row-label">Address</span><span class="confirm-row-val">${esc(data.address)}</span></div>
+      <div class="confirm-row"><span class="confirm-row-label">Issue</span><span class="confirm-row-val">${esc(data.issue)}</span></div>
+      <div class="confirm-row"><span class="confirm-row-label">Urgency</span><span class="confirm-row-val">${urgTag}</span></div>
+      ${data.photoCount > 0 ? `<div class="confirm-row"><span class="confirm-row-label">Photos</span><span class="confirm-row-val">${data.photoCount} attached 📷</span></div>` : ''}
+    `;
+
+    // Build WhatsApp deep link
+    const waMsg = encodeURIComponent(
+      `🔧 *NEW JOB REQUEST*${em ? ' 🚨 EMERGENCY' : ''}\n` +
+      `━━━━━━━━━━━━━━━\n` +
+      `👤 *Name:* ${data.name}\n` +
+      `📞 *Phone:* ${data.phone}\n` +
+      `📍 *Address:* ${data.address}\n` +
+      `🔧 *Issue:* ${data.issue}\n` +
+      `📝 *Details:* ${data.description}\n` +
+      `⚡ *Urgency:* ${data.urgency}\n` +
+      `🖼 *Photos:* ${data.photoCount} uploaded\n` +
+      `⏱ *Time:* ${data.timestamp.toLocaleString('en-GB')}`
+    );
+    const waLink = document.getElementById('whatsappLink');
+    waLink.href = `https://wa.me/${WHATSAPP_NUM}?text=${waMsg}`;
+    waLink.onclick = null;
+
+    document.getElementById('bookingPage').classList.remove('active');
+    document.getElementById('confirmPage').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function newBooking() {
+    ['fullName','phone','address','description'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('issueType').value = '';
+    document.getElementById('urgNormal').checked = true;
+    const btn = document.getElementById('submitBtn');
+    btn.classList.remove('emergency-mode');
+    btn.querySelector('.btn-icon').textContent = '⚡';
+    document.getElementById('btnText').textContent = 'Request a Plumber';
+    document.getElementById('errorMsg').style.display = 'none';
+    selectedFiles = []; renderPreviews();
+    document.querySelectorAll('.field').forEach(f => f.classList.remove('error'));
+    document.getElementById('confirmPage').classList.remove('active');
+    document.getElementById('bookingPage').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  document.querySelectorAll('input, textarea, select').forEach(el =>
+    el.addEventListener('input', () => el.closest('.field')?.classList.remove('error'))
+  );
+</script>
+</body>
+</html>
